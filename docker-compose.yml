@@ -1,0 +1,45 @@
+version: '3.4'
+
+networks:
+  cluster-network:
+    driver: bridge
+volumes:
+    rnode1:
+    rnode2:
+services:
+  rabbitmqnode1:
+    image: rabbitmq:3-management
+    container_name: 'RabbitMQ-Server-1'
+    networks:
+        - cluster-network
+    hostname: rabbitmqnode1
+    volumes:
+     - rnode1:/var/lib/rabbitmq
+    ports:
+        - "4369:4369"
+        - "5672:5672"
+        - "15672:15672"
+        - "25672:25672"
+        - "35672:35672"
+    environment:
+        - RABBITMQ_ERLANG_COOKIE=cluster_cookie
+        - RABBITMQ_DEFAULT_USER=admin
+        - RABBITMQ_DEFAULT_PASS=admin
+  rabbitmqnode2:
+    image: rabbitmq:3-management
+    container_name: 'RabbitMQ-Server-2'
+    hostname: rabbitmqnode2
+    networks:
+        - cluster-network
+    volumes:
+     - rnode2:/var/lib/rabbitmq
+    environment:
+        - RABBITMQ_ERLANG_COOKIE=cluster_cookie
+        - RABBITMQ_DEFAULT_USER=admin
+        - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+        - "4370:4369"
+        - "5673:5672"
+        - "15673:15672"
+        - "25673:25672"
+        - "35673:35672"
